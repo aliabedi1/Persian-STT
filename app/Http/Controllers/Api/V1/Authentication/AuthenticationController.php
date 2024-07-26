@@ -2,21 +2,74 @@
 
 namespace App\Http\Controllers\Api\V1\Authentication;
 
+use App\Enums\IsUsed;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Authentication\LoginRequest;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Str;
 
 class AuthenticationController extends Controller
 {
     public function login(LoginRequest $request)
     {
-        dd($request->all());
+        $user = User::query()->where('mobile', $request->input('mobile'))->first();
+        if (empty($user)) {
+            $user = User::query()
+                ->create([
+                    'mobile' => $request->input('mobile'),
+                ]);
+        }
+
+        $latestValidCode = $user->otps()
+            ->where([
+                'mobile' => $user->mobile,
+            ])
+            ->where('expires_at', '>', Carbon::now())
+            ->whereNull('used_at')
+            ->first();
+
+        if ($latestValidCode && isset($latestValidCode->expires_at)) {
+            return Response::success(
+                message: __("A valid verification code is available."),
+                data: [
+                    'hashcode' => $latestValidCode->hashcode,
+                    'expires_at' => $latestValidCode->expires_at,
+                ]
+            );
+        }
+
+
+        $newOtp = $user
+            ->otps()
+            ->create([
+                'code' => mt_rand(111111, 999999),
+                'hashcode' => Str::random(8),
+                'mobile' => $user->mobile,
+                'expires_at' => Carbon::now()->addMinutes(2),
+                'is_used' => IsUsed::NO,
+            ]);
+
+//        TODO sms code
+
+        return Response::success(
+            message: __('Code generated successfully and sent via sms for entered mobile number.'),
+            data: [
+                'hashcode' => $newOtp->hashcode,
+                'expires_at' => $newOtp->expires_at,
+            ]
+        );
     }
+
+
     public function verify()
     {
 
     }
+
+
     public function logout()
     {
-
     }
 }

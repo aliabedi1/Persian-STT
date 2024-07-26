@@ -1139,5 +1139,7 @@
   "Zimbabwe": "زیمباوه",
   "ZIP / Postal Code": "کد پستی",
   "Zip / Postal Code": "کدپستی",
-  "Åland Islands": "جزایر الند"
+  "Åland Islands": "جزایر الند",
+  "Code generated successfully and sent via sms for entered mobile number.": "کد با موفقیت تولید و از طریق پیامک برای شماره موبایل وارد شده ارسال شد.",
+  "A valid verification code is available.": "یک کد احراز هویت موجود است."
 }
