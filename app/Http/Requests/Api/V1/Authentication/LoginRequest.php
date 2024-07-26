@@ -29,4 +29,12 @@ class LoginRequest extends FormRequest
             ],
         ];
     }
+
+
+    public function attributes()
+    {
+        return [
+            'mobile' => 'شماره موبایل'
+        ];
+    }
 }
