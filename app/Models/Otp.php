@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $user_id
  * @property string $code
  * @property string $mobile
+ * @property string $hashcode
  * @property Carbon $expires_at
  * @property bool $is_used
  * @property Carbon|null $used_at
