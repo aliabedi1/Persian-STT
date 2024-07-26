@@ -19,6 +19,7 @@ enum SystemMessage: int
     case DATA_EXIST = 100;
     case USER_NOT_FOUND = 101;
 
+    case INVALID_OTP = 102;
     /*case RECURSIVE_TRANSACTION = 100;
     case CURRENCY_MISMATCH = 101;
     case SOURCE_UNAVAILABLE = 102;

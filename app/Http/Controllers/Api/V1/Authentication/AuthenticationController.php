@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\V1\Authentication;
 
 use App\Enums\IsUsed;
+use App\Enums\SystemMessage;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Authentication\LoginRequest;
+use App\Http\Requests\Api\V1\Authentication\VerifyRequest;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Response;
@@ -22,7 +24,8 @@ class AuthenticationController extends Controller
                 ]);
         }
 
-        $latestValidCode = $user->otps()
+        $latestValidCode = $user
+            ->otps()
             ->where([
                 'mobile' => $user->mobile,
             ])
@@ -63,8 +66,44 @@ class AuthenticationController extends Controller
     }
 
 
-    public function verify()
+    public function verify(VerifyRequest $request)
     {
+        $user = User::query()
+            ->where('mobile', $request->input('mobile'))
+            ->first();
+
+        $latestValidCode = $user
+            ->otps()
+            ->where([
+                'mobile' => $user->mobile,
+            ])
+            ->where('expires_at', '>', Carbon::now())
+            ->whereNull('used_at')
+            ->first();
+
+
+        if (empty($latestValidCode)) {
+            return Response::error(
+                code: SystemMessage::INVALID_OTP,
+                message: __("Invalid credentials for a user.")
+            );
+        }
+
+        $latestValidCode->update([
+            'expires_at' => Carbon::now()
+        ]);
+
+        $token = $user->createToken('user_auth')->plainTextToken;
+
+
+
+        return Response::success(
+            message: __("Your authentication token has been successfully generated."),
+            data: [
+                'token' => $token,
+            ]
+        );
+
 
     }
 
