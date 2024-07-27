@@ -1145,5 +1145,11 @@
   "Invalid credentials for a user.": "اطلاعات وارد شده نادرست است.",
   "Your authentication token has been successfully generated.": "توکن احراز هویت شما با موفقیت ساخته شد.",
   "Unauthenticated.": "احراز هویت نشده.",
-  "Removed successfully.": "با موفقیت حذف شد."
+  "Removed successfully.": "با موفقیت حذف شد.",
+  "Current user profile": "پروفایل کاربری",
+  "Profile updated successfully.": "پروفایل با موفقیت آپدیت شد.",
+  ":attribute must contain only english and persian characters.": ":attribute باید فقط شامل حروف فارسی و لاتین باشد."
+
+
+
 }
