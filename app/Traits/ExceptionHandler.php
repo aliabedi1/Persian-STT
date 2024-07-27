@@ -23,7 +23,7 @@ use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
-trait ExceptionsHandler
+trait ExceptionHandler
 {
     /**
      * Render an exception into an HTTP response.
