@@ -72,11 +72,20 @@ class AuthenticationController extends Controller
             ->where('mobile', $request->input('mobile'))
             ->first();
 
+
+        if (empty($user)) {
+            return Response::error(
+                code: SystemMessage::INVALID_OTP,
+                message: __("Invalid credentials for a user.")
+            );
+        }
+
         $latestValidCode = $user
             ->otps()
             ->where([
                 'mobile' => $user->mobile,
             ])
+            ->where('hashcode', $request->input('hashcode'))
             ->where('expires_at', '>', Carbon::now())
             ->whereNull('used_at')
             ->first();
@@ -96,19 +105,23 @@ class AuthenticationController extends Controller
         $token = $user->createToken('user_auth')->plainTextToken;
 
 
-
         return Response::success(
             message: __("Your authentication token has been successfully generated."),
             data: [
                 'token' => $token,
+                'has_name' => (bool)($user->first_name || $user->last_name),
             ]
         );
-
-
     }
 
 
     public function logout()
     {
+        auth()
+            ->user()
+            ->currentAccessToken()
+            ->delete();
+
+        return Response::destroy();
     }
 }
