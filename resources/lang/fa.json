@@ -1143,5 +1143,7 @@
   "Code generated successfully and sent via sms for entered mobile number.": "کد با موفقیت تولید و از طریق پیامک برای شماره موبایل وارد شده ارسال شد.",
   "A valid verification code is available.": "یک کد احراز هویت موجود است.",
   "Invalid credentials for a user.": "اطلاعات وارد شده نادرست است.",
-  "Your authentication token has been successfully generated.": "توکن احراز هویت شما با موفقیت ساخته شد."
+  "Your authentication token has been successfully generated.": "توکن احراز هویت شما با موفقیت ساخته شد.",
+  "Unauthenticated.": "احراز هویت نشده.",
+  "Removed successfully.": "با موفقیت حذف شد."
 }

@@ -28,7 +28,7 @@ class VerifyRequest extends FormRequest
                 'string',
                 'ir_mobile:zero'
             ],
-            'hash_code' => [
+            'hashcode' => [
                 'required',
                 'string',
                 'size:8'
