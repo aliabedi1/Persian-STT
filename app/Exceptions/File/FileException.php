@@ -2,7 +2,8 @@
 
 namespace App\Exceptions\File;
 
-use App\Enums\General\SystemMessage;
+
+use App\Enums\SystemMessage;
 use Exception;
 use Throwable;
 

@@ -3,11 +3,14 @@
 namespace App\Services;
 
 
+use App\Enums\IsPrivate;
 use App\Exceptions\File\DifficultyCreatingValidationRulesException;
-use App\Exceptions\File\EntryFieldsMissMatchTableFillableException;
+use App\Exceptions\File\EntryFieldsMissMatchTableFillablesException;
 use App\Exceptions\File\FileException;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
@@ -18,6 +21,14 @@ class FileService
     private string $requestKey = '';
 
     private string $baseDir = '/';
+
+
+    public function __construct()
+    {
+        $this->setDefaultType();
+        $this->setDefaultRequestKey();
+    }
+
 
     /**
      * Name generator for file
@@ -30,6 +41,7 @@ class FileService
         return sha1(bcrypt(uniqid() . '.' . microtime())) . '.' . $ext;
     }
 
+
     /**
      * Validate type
      *
@@ -37,9 +49,11 @@ class FileService
      */
     private function typeValidation(): void
     {
-        if (!isset($this->type) || !in_array($this->type, $this->getTypes()))
+        if (!isset($this->type) || !in_array($this->type, $this->getTypes())) {
             throw new FileException(__('The file type is null or not valid.'));
+        }
     }
+
 
     /**
      * Get type information from service config's.
@@ -49,8 +63,9 @@ class FileService
      */
     public function getTypeFromConfig(string $type_key = null): array|null
     {
-        return config('file.types')[$type_key ?? $this->type] ?? null;
+        return $this->getTypes()[$type_key ?? $this->type] ?? null;
     }
+
 
     /**
      * Set file type
@@ -61,6 +76,7 @@ class FileService
     {
         return array_keys(config('file.types'));
     }
+
 
     /**
      * Determine file type for init upload.
@@ -74,6 +90,17 @@ class FileService
         return $this;
     }
 
+
+    /**
+     * Set default file type for init upload.
+     *
+     */
+    private function setDefaultType(): void
+    {
+        $this->type = 'voice';
+    }
+
+
     /**
      * Get base directory
      *
@@ -83,6 +110,7 @@ class FileService
     {
         return $this->baseDir;
     }
+
 
     /**
      * Determine file base directory
@@ -96,6 +124,7 @@ class FileService
         return $this;
     }
 
+
     /**
      * Validate request key
      *
@@ -103,9 +132,11 @@ class FileService
      */
     private function requestKeyValidation(): void
     {
-        if ($this->requestKey === '')
+        if ($this->requestKey === '') {
             throw new FileException(__('Request key not set or not valid.'));
+        }
     }
+
 
     /**
      * Determine file type for init upload.
@@ -119,6 +150,17 @@ class FileService
         return $this;
     }
 
+
+    /**
+     * set default request key for init upload.
+     *
+     */
+    private function setDefaultRequestKey(): void
+    {
+        $this->requestKey = 'file';
+    }
+
+
     /**
      * Get file model from type
      *
@@ -129,9 +171,12 @@ class FileService
     {
         $typeConfig = $this->getTypeFromConfig($this->type);
         $model = new $typeConfig["model"];
-        if (!($model instanceof Model)) throw new FileException(__('The file sent in the request was not found.'));
+        if (!($model instanceof Model)) {
+            throw new FileException(__('The file sent in the request was not found.'));
+        }
         return $model;
     }
+
 
     /**
      * Prepare for make validation rule
@@ -144,6 +189,7 @@ class FileService
         $this->requestKeyValidation();
         return $this->performValidation();
     }
+
 
     /**
      * Make validation rule
@@ -159,8 +205,9 @@ class FileService
         $required = 'required';
 
         // validate max_file_size and valid_file_extension
-        if (!$max_file_size || !$valid_file_extension)
+        if (!$max_file_size || !$valid_file_extension) {
             throw new DifficultyCreatingValidationRulesException("Error creating validation rules for general files.");
+        }
 
         return [
             $this->requestKey => [
@@ -171,6 +218,7 @@ class FileService
             ]
         ];
     }
+
 
     /**
      * Prepare file for upload
@@ -183,11 +231,13 @@ class FileService
         $this->typeValidation();
         $this->requestKeyValidation();
 
-        if (!request()->hasFile($this->requestKey))
+        if (!request()->hasFile($this->requestKey)) {
             throw new FileException(__('The file sent in the request was not found.'));
+        }
 
         return $this->performUpload(request()->file($this->requestKey));
     }
+
 
     /**
      * Upload file
@@ -200,7 +250,7 @@ class FileService
     {
         $typeConfig = $this->getTypeFromConfig($this->type);
         $fileExtension = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
-        $fileSize = (int)($file->getSize() / 1024); // unit: KB
+        $fileSize = ceil($file->getSize() / 1024); // unit: KB
         $fileNameFormatted = $this->nameGenerator($fileExtension);
 
         $file->storeAs($this->baseDir, $fileNameFormatted, ['disk' => $typeConfig["disk"]]);
@@ -209,13 +259,11 @@ class FileService
         $row = $this
             ->getModel()
             ->create([
-                'portal_id' => config('base.portal_id'),
-                'language_id' => config('base.language_id'),
+
                 'file' => $fileNameFormatted,
                 'file_size' => $fileSize,
                 'file_extension' => $fileExtension,
-                'userable_type' => auth()->user() ? auth()->user()::class : null,
-                'userable_id' => auth()->id() ?? null,
+                'user_id' => auth()->id(),
                 'created_at' => Carbon::now(),
             ]);
 
@@ -228,57 +276,67 @@ class FileService
         ];
     }
 
+
     /**
      * Update additions fields in file model
      *
-     * @param int $fileId
+     * @param int|array $fileId
      * @param array $fields
      * @return void
-     * @throws EntryFieldsMissMatchTableFillableException
+     * @throws EntryFieldsMissMatchTableFillablesException
      * @throws FileException
      */
     public function updateOtherFields(int|array $fileId, array $fields): void
     {
         $this->typeValidation();
-        if (!$this->checkUpdatableFields($fields))
-            throw new EntryFieldsMissMatchTableFillableException('Sent fields not found in the targeted model.');
+        if (!$this->checkUpdatableFields($fields)) {
+            throw new EntryFieldsMissMatchTableFillablesException('Sent fields not found in the targeted model.');
+        }
 
-//        handle array input
-        if (is_array($fileId))
+        if (is_int($fileId)) {
+            $fileId = [$fileId];
+        }
+
+        DB::beginTransaction();
+        try {
             $this->getModel()::query()
                 ->whereIn('id', $fileId)
                 ->update($fields);
-        else
-        {
-            $fileRow = $this->getModel()::find($fileId);
-            if (!$fileRow)
-                throw new FileException(__('File not found.'));
-            $fileRow->update($fields);
+            DB::commit();
+        } catch (FileException $exception) {
+            Log::error($exception);
+            DB::rollBack();
         }
-
     }
+
 
     /**
      * Delete file from disk
      *
-     * @param $file_id
+     * @param int|array $file_id
      * @return void
-     * @throws FileException
+     * @throws \App\Exceptions\File\FileException
      */
-    public function deleteFile($file_id): void
+    public function deleteFile(int|array $file_id): void
     {
         $type = $this->getTypeFromConfig();
 
-        // find file from db
-        $fileRow = $this->getModel()->find($file_id);
-        if (!$fileRow) throw new FileException(__('File not found.'));
+        if (is_int($file_id)) {
+            $file_id = [$file_id];
+        }
+        $fileRows = $this
+            ->getModel()
+            ->query()
+            ->findMany($file_id);
 
-        // remove from disk
-        Storage::disk($type["disk"])->delete($fileRow->file);
-
-        // remove from db
-        $fileRow->delete();
+        foreach ($fileRows as $fileRow) {
+            // remove from disk
+            Storage::disk($type["disk"])->delete($fileRow->file);
+            // remove from db
+            $fileRow->delete();
+        }
     }
+
 
     /**
      * Get file url
@@ -290,15 +348,23 @@ class FileService
     public function getUrl(int $file_id): null|string
     {
         $typeConfig = $this->getTypeFromConfig($this->type);
-        $file = $this->getModel()->find($file_id);
-        if (!$file) return null;
+        $file = $this
+            ->getModel()
+            ->query()
+            ->find($file_id);
 
-        if (!isset($file->is_private))
+
+        if (!$file) {
+            return null;
+        }
+
+        if (!isset($file->is_private)) {
             throw new FileException(__("Field [is_private] not found in model."));
+        }
 
         if ($file->is_private == IsPrivate::YES) {
             $url = Url::temporarySignedRoute(
-                'api.v1.common.files.private',
+                'api.v1.files.private',
                 now()->addMinutes(10),
                 [
                     'type' => $this->type,
@@ -312,6 +378,7 @@ class FileService
 
         return $url;
     }
+
 
     /**
      * Get file details
@@ -330,19 +397,25 @@ class FileService
         ];
 
         $typeConfig = $this->getTypeFromConfig($this->type);
-        $file = $this->getModel()->find($file_id);
-        if (!$file) return null;
+        $file = $this
+            ->getModel()
+            ->query()
+            ->find($file_id);
+        if (!$file) {
+            return null;
+        }
 
         $finalArray["size"] = $file->file_size ?? null;
         $finalArray["ext"] = $file->file_extension ?? null;
         $finalArray["name"] = $file->file ?? null;
 
-        if (!isset($file->is_private))
+        if (!isset($file->is_private)) {
             throw new FileException(__("Field [is_private] not found in model."));
+        }
 
         if ($file->is_private == IsPrivate::YES) {
             $finalArray["url"] = Url::temporarySignedRoute(
-                'api.v1.common.files.private',
+                'api.v1.files.private',
                 now()->addMinutes(10),
                 [
                     'type' => $this->type,

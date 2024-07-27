@@ -8,8 +8,8 @@ return [
          *   'disk' => 'public', // required
          * ],
         */
-        'general' => [
-            'model' => App\Models\GeneralFile::class,
+        'voice' => [
+            'model' => App\Models\VoiceFile::class,
             'disk' => 'public',
         ],
 
