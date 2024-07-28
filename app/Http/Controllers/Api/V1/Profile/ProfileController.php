@@ -2,17 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1\Profile;
 
-use App\Enums\IsUsed;
-use App\Enums\SystemMessage;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Authentication\LoginRequest;
-use App\Http\Requests\Api\V1\Authentication\VerifyRequest;
 use App\Http\Requests\Api\V1\Profile\UpdateProfileRequest;
 use App\Http\Resources\Profile\ProfileResource;
-use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {
