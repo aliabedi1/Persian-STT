@@ -1148,7 +1148,8 @@
   "Removed successfully.": "با موفقیت حذف شد.",
   "Current user profile": "پروفایل کاربری",
   "Profile updated successfully.": "پروفایل با موفقیت آپدیت شد.",
-  ":attribute must contain only english and persian characters.": ":attribute باید فقط شامل حروف فارسی و لاتین باشد."
+  ":attribute must contain only english and persian characters.": ":attribute باید فقط شامل حروف فارسی و لاتین باشد.",
+  "File uploaded successfully.": "فایل با موفقیت آپلود شد."
 
 
 

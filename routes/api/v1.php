@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Authentication\AuthenticationController;
+use App\Http\Controllers\Api\V1\File\VoiceController;
 use App\Http\Controllers\Api\V1\Profile\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,5 +16,11 @@ Route::middleware('auth:api-user')->group(function () {
         Route::get('current', [ProfileController::class, 'current'])->name('current');
         Route::post('update', [ProfileController::class, 'update'])->name('update');
     });
+    Route::prefix('voices')->as('voices.')->group(function () {
+        Route::post('upload', [VoiceController::class, 'upload'])->name('upload');
+
+    });
+
+
 });
 

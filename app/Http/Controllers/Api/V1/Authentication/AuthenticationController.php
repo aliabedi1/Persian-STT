@@ -99,7 +99,8 @@ class AuthenticationController extends Controller
         }
 
         $latestValidCode->update([
-            'expires_at' => Carbon::now()
+            'used_at' => Carbon::now(),
+            'is_used' => IsUsed::YES
         ]);
 
         $token = $user->createToken('user_auth')->plainTextToken;

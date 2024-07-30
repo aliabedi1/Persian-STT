@@ -15,9 +15,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Class VoiceFile
  * 
  * @property int $id
- * @property string $file_path
+ * @property string $file
  * @property string $file_size
  * @property string $file_extension
+ * @property int $voice_id
  * @property int $user_id
  * @property bool $is_private
  * @property Carbon|null $created_at
@@ -34,12 +35,14 @@ class VoiceFile extends Model
 	protected $table = 'voice_files';
 
 	protected $casts = [
+		'voice_id' => 'int',
 		'user_id' => 'int',
 		'is_private' => IsPrivate::class
 	];
 
 	protected $fillable = [
-		'file_path',
+		'voice_id',
+		'file',
 		'file_size',
 		'file_extension',
 		'user_id',
@@ -49,5 +52,9 @@ class VoiceFile extends Model
 	public function user()
 	{
 		return $this->belongsTo(User::class);
+	}
+    public function voice()
+	{
+		return $this->belongsTo(Voice::class);
 	}
 }

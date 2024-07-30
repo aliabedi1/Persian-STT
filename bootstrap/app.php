@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AddApiRequiredParametersMiddleware;
+use App\Http\Middleware\ValidateSignature;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -20,7 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     )
     ->withMiddleware(function (Middleware $middleware) {
+
         $middleware->api()->prepend(AddApiRequiredParametersMiddleware::class);
+        $middleware->prependToGroup('signed', ValidateSignature::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

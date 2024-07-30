@@ -63,7 +63,7 @@ class FileService
      */
     public function getTypeFromConfig(string $type_key = null): array|null
     {
-        return $this->getTypes()[$type_key ?? $this->type] ?? null;
+        return config('file.types')[$type_key ?? $this->type] ?? null;
     }
 
 
@@ -74,6 +74,7 @@ class FileService
      */
     private function getTypes(): array
     {
+
         return array_keys(config('file.types'));
     }
 
@@ -195,7 +196,6 @@ class FileService
      * Make validation rule
      *
      * @return array|array[]|string[]
-     * @throws DifficultyCreatingValidationRulesException
      */
     private function performValidation(): array
     {
@@ -204,10 +204,10 @@ class FileService
         $valid_file_extension = 'mp3,wav,aac,flac,ogg,wma,m4a,aiff,aif';
         $required = 'required';
 
-        // validate max_file_size and valid_file_extension
-        if (!$max_file_size || !$valid_file_extension) {
-            throw new DifficultyCreatingValidationRulesException("Error creating validation rules for general files.");
-        }
+//        // validate max_file_size and valid_file_extension
+//        if (!$max_file_size || !$valid_file_extension) {
+//            throw new DifficultyCreatingValidationRulesException("Error creating validation rules for general files.");
+//        }
 
         return [
             $this->requestKey => [
@@ -252,6 +252,7 @@ class FileService
         $fileExtension = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
         $fileSize = ceil($file->getSize() / 1024); // unit: KB
         $fileNameFormatted = $this->nameGenerator($fileExtension);
+
 
         $file->storeAs($this->baseDir, $fileNameFormatted, ['disk' => $typeConfig["disk"]]);
 
