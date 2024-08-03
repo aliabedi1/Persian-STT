@@ -18,9 +18,7 @@ Route::middleware('auth:api-user')->group(function () {
     });
     Route::prefix('voices')->as('voices.')->group(function () {
         Route::post('upload', [VoiceController::class, 'upload'])->name('upload');
-
+        Route::post('delete', [VoiceController::class, 'delete'])->name('delete');
     });
-
-
 });
 
