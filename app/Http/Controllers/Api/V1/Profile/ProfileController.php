@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Profile\UpdateProfileRequest;
-use App\Http\Resources\Profile\ProfileResource;
+use App\Http\Resources\Profile\UserResource;
 use Illuminate\Support\Facades\Response;
 
 class ProfileController extends Controller
@@ -13,7 +13,7 @@ class ProfileController extends Controller
     {
         return Response::success(
             message: __("Current user profile"),
-            data: new ProfileResource(
+            data: new UserResource(
                 auth('api-user')
                     ->user()
             )
@@ -32,7 +32,7 @@ class ProfileController extends Controller
 
         return Response::success(
             message: __("Profile updated successfully."),
-            data: new ProfileResource(
+            data: new UserResource(
                 auth('api-user')
                     ->user()
             )

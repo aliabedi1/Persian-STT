@@ -4,7 +4,7 @@ namespace App\Http\Resources\Profile;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProfileResource extends JsonResource
+class UserResource extends JsonResource
 {
 
 
@@ -15,7 +15,6 @@ class ProfileResource extends JsonResource
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'mobile' => $this->mobile,
-
         ];
     }
 }
