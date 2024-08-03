@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property string|null $text
  * @property int $user_id
+ * @property int $voice_file_id
  * @property bool $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -33,12 +34,14 @@ class Voice extends Model
 
 	protected $casts = [
 		'user_id' => 'int',
+		'voice_file_id' => 'int',
 		'status' => VoiceStatus::class
 	];
 
 	protected $fillable = [
 		'text',
 		'user_id',
+		'voice_file_id',
 		'status',
 	];
 
@@ -46,4 +49,10 @@ class Voice extends Model
 	{
 		return $this->belongsTo(User::class);
 	}
+    public function voice_file()
+    {
+        return $this->hasOne(VoiceFile::class);
+    }
+
+
 }

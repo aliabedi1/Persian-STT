@@ -7,6 +7,7 @@
 namespace App\Models;
 
 use App\Enums\IsPrivate;
+use App\Traits\FileUrlGenerator;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,7 +19,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $file
  * @property string $file_size
  * @property string $file_extension
- * @property int $voice_id
  * @property int $user_id
  * @property bool $is_private
  * @property Carbon|null $created_at
@@ -31,17 +31,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class VoiceFile extends Model
 {
-	use SoftDeletes;
+	use SoftDeletes, FileUrlGenerator;
 	protected $table = 'voice_files';
 
 	protected $casts = [
-		'voice_id' => 'int',
 		'user_id' => 'int',
 		'is_private' => IsPrivate::class
 	];
 
 	protected $fillable = [
-		'voice_id',
 		'file',
 		'file_size',
 		'file_extension',
