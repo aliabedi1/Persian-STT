@@ -1149,8 +1149,8 @@
   "Current user profile": "پروفایل کاربری",
   "Profile updated successfully.": "پروفایل با موفقیت آپدیت شد.",
   ":attribute must contain only english and persian characters.": ":attribute باید فقط شامل حروف فارسی و لاتین باشد.",
+  "Calling api endpoints faced some issues, please try again later.": "ارتباط با api مقصد برای دریافت نتیجه درخواست با خطا مواجه شد, لطفا دوباره تلاش کنید.",
+  "Voice deleted successfully.": "صوت با موفقیت حذف شد.",
+  "Voices deleted successfully.": "صوت ها با موفقیت حذف شدند.",
   "File uploaded successfully.": "فایل با موفقیت آپلود شد."
-
-
-
 }
