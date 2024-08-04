@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Authentication\AuthenticationController;
-use App\Http\Controllers\Api\V1\File\VoiceController;
+use App\Http\Controllers\Api\V1\Voice\VoiceController;
 use App\Http\Controllers\Api\V1\Profile\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +19,7 @@ Route::middleware('auth:api-user')->group(function () {
     Route::prefix('voices')->as('voices.')->group(function () {
         Route::post('upload', [VoiceController::class, 'upload'])->name('upload');
         Route::post('delete', [VoiceController::class, 'delete'])->name('delete');
+        Route::get('history', [VoiceController::class, 'history'])->name('history');
     });
 });
 
