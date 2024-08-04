@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\File;
+namespace App\Http\Controllers\Api\V1\Voice;
 
+use App\Constants\Base;
 use App\Enums\SystemMessage;
 use App\Enums\VoiceStatus;
 use App\Exceptions\Api\ApiException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Voice\DeleteVoiceRequest;
 use App\Http\Requests\Api\V1\Voice\UploadVoiceRequest;
+use App\Http\Resources\PaginationResource;
 use App\Http\Resources\Voice\VoiceResource;
 use App\Models\Voice;
 use App\Services\FileService;
@@ -105,5 +107,24 @@ class VoiceController extends Controller
         );
     }
 
+
+    public function history()
+    {
+        return Response::success(
+            message: __('Sent voice history'),
+            data: new PaginationResource(
+                VoiceResource::collection(
+                    auth()
+                        ->user()
+                        ->voices()
+                        ->with([
+                            'voice_file'
+                        ])
+                        ->latest()
+                        ->paginate(Base::PAGINATION_PER_PAGE)
+                )
+            )
+        );
+    }
 
 }
