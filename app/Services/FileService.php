@@ -7,6 +7,7 @@ use App\Enums\IsPrivate;
 use App\Exceptions\File\DifficultyCreatingValidationRulesException;
 use App\Exceptions\File\EntryFieldsMissMatchTableFillablesException;
 use App\Exceptions\File\FileException;
+use App\Rules\VoiceDuration;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -158,7 +159,7 @@ class FileService
      */
     private function setDefaultRequestKey(): void
     {
-        $this->requestKey = 'file';
+        $this->requestKey = 'voice';
     }
 
 
@@ -214,7 +215,8 @@ class FileService
                 $required,
                 'file',
                 'mimes:' . $valid_file_extension,
-                'max:' . $max_file_size
+                'max:' . $max_file_size,
+                new VoiceDuration()
             ]
         ];
     }
