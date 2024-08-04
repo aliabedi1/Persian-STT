@@ -1150,7 +1150,9 @@
   "Profile updated successfully.": "پروفایل با موفقیت آپدیت شد.",
   ":attribute must contain only english and persian characters.": ":attribute باید فقط شامل حروف فارسی و لاتین باشد.",
   "Calling api endpoints faced some issues, please try again later.": "ارتباط با api مقصد برای دریافت نتیجه درخواست با خطا مواجه شد, لطفا دوباره تلاش کنید.",
-  "Voice deleted successfully.": "صوت با موفقیت حذف شد.",
-  "Voices deleted successfully.": "صوت ها با موفقیت حذف شدند.",
+  "Voice deleted successfully.": "صدا با موفقیت حذف شد.",
+  "Voices deleted successfully.": "صدا ها با موفقیت حذف شدند.",
+  "Sent voice history": "تاریخچه صدا های ارسالی",
+  "Uploaded voice duration must be less than or equal to :maxDuration seconds.": "صدای آپلود شده باید کوتاه تر یا مساوی :maxDuration ثانیه باشد.",
   "File uploaded successfully.": "فایل با موفقیت آپلود شد."
 }
