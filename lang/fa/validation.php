@@ -197,6 +197,7 @@ return [
         'last_name' => 'نام خانوادگی',
         'password' => 'رمز عبور',
         'password_confirmation' => 'تاییدیه رمز عبور',
+        'voice' => 'صدا',
     ],
 
 ];
