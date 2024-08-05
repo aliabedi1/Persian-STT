@@ -4,6 +4,7 @@ namespace App\Rules;
 
 use Closure;
 use FFMpeg\FFMpeg;
+use getID3;
 use Illuminate\Contracts\Validation\ValidationRule;
 
 class VoiceDuration implements ValidationRule
@@ -24,12 +25,14 @@ class VoiceDuration implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $filePath = $value->getRealPath();
+        $filePath = $value->getPathname();
 
-        $ffmpeg = FFMpeg::create();
-        $audio = $ffmpeg->open($filePath);
+        $getID3 = new getID3;
 
-        $duration = $audio->getFormat()->get('duration');
+        $fileInfo = $getID3->analyze($filePath);
+
+        // Extract playtime seconds
+        $duration = isset($fileInfo['playtime_seconds']) ? floor($fileInfo['playtime_seconds']) : 0;
 
         if ($duration > $this->maxDuration) {
             $fail(
