@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class VoiceFile
- * 
+ *
  * @property int $id
  * @property string $file
  * @property string $file_size
@@ -24,35 +24,39 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
- * 
+ *
  * @property User $user
  *
  * @package App\Models
  */
 class VoiceFile extends Model
 {
-	use SoftDeletes, FileUrlGenerator;
-	protected $table = 'voice_files';
+    use SoftDeletes;
 
-	protected $casts = [
-		'user_id' => 'int',
-		'is_private' => IsPrivate::class
-	];
+    protected $table = 'voice_files';
 
-	protected $fillable = [
-		'file',
-		'file_size',
-		'file_extension',
-		'user_id',
-		'is_private'
-	];
+    protected $casts = [
+        'user_id' => 'int',
+        'is_private' => IsPrivate::class
+    ];
 
-	public function user()
-	{
-		return $this->belongsTo(User::class);
-	}
+    protected $fillable = [
+        'file',
+        'file_size',
+        'file_extension',
+        'user_id',
+        'is_private'
+    ];
+
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+
     public function voice()
-	{
-		return $this->belongsTo(Voice::class);
-	}
+    {
+        return $this->belongsTo(Voice::class);
+    }
 }
