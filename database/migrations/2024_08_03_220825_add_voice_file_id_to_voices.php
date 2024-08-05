@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('voices', function (Blueprint $table) {
-            $table->unsignedBigInteger('voice_id')->after('user_id');
+            $table->unsignedBigInteger('voice_file_id')->after('user_id');
 
         });
     }
@@ -23,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('voices', function (Blueprint $table) {
-            $table->dropColumn('voice_id');
+            $table->dropColumn('voice_file_id');
         });
     }
 };
