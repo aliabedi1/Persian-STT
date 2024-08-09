@@ -1154,5 +1154,7 @@
   "Voices deleted successfully.": "صدا ها با موفقیت حذف شدند.",
   "Sent voice history": "تاریخچه صدا های ارسالی",
   "Uploaded voice duration must be less than or equal to :maxDuration seconds.": "صدای آپلود شده باید کوتاه تر یا مساوی :maxDuration ثانیه باشد.",
-  "File uploaded successfully.": "فایل با موفقیت آپلود شد."
+  "File uploaded successfully.": "فایل با موفقیت آپلود شد.",
+  "About me": "درباره من"
+
 }
