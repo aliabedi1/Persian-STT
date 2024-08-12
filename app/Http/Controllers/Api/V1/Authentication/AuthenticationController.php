@@ -54,7 +54,7 @@ class AuthenticationController extends Controller
                 'is_used' => IsUsed::NO,
             ]);
 
-//        TODO sms code
+        sendSms(substr((string)$newOtp->mobile, 1), $newOtp->code);
 
         return Response::success(
             message: __('Code generated successfully and sent via sms for entered mobile number.'),
