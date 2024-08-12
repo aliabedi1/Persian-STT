@@ -14,7 +14,7 @@ if (!function_exists('getTextFromSpeech')) {
         );
 
         $data = [
-            "audio_url" => "http://farsi.voiceoversamples.com/FAR_F_Mitra.mp3", # todo add $file_url
+            "audio_url" => $file_url,
             'language_code' => $config['LANGUAGE_CODE'],
             'speech_model' => $config['SPEECH_MODEL']
         ];
