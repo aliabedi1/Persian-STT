@@ -55,8 +55,5 @@ class VoiceFile extends Model
     }
 
 
-    public function voice()
-    {
-        return $this->belongsTo(Voice::class);
-    }
+
 }
