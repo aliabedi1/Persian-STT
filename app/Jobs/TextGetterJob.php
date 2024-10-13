@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Enums\SystemMessage;
 use App\Enums\VoiceStatus;
 use App\Exceptions\Api\ApiException;
 use App\Models\Voice;
@@ -12,8 +11,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Response;
 
 class TextGetterJob implements ShouldQueue
 {

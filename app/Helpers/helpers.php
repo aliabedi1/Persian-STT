@@ -1,8 +1,5 @@
 <?php
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-
 if (!function_exists('getTextFromSpeech')) {
     /**
      * @throws \Exception
