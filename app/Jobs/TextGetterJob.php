@@ -38,8 +38,9 @@ class TextGetterJob implements ShouldQueue
      */
     public function handle(): void
     {
+
         try {
-            $text = getTextFromSpeechAvalAi($this->uploadedFile['name']);
+            $text = json_decode(getTextFromSpeechAvalAi($this->uploadedFile['name']))->text;
             $this->voice
                 ->update([
                     'text' => $text,
