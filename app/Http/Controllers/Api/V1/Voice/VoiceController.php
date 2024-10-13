@@ -11,6 +11,7 @@ use App\Http\Requests\Api\V1\Voice\DeleteVoiceRequest;
 use App\Http\Requests\Api\V1\Voice\UploadVoiceRequest;
 use App\Http\Resources\PaginationResource;
 use App\Http\Resources\Voice\VoiceResource;
+use App\Jobs\TextGetterJob;
 use App\Models\Voice;
 use App\Services\FileService;
 use Illuminate\Support\Facades\Response;
@@ -26,31 +27,23 @@ class VoiceController extends Controller
      */
     public function upload(UploadVoiceRequest $request)
     {
-        $fileService = new FileService();
-        $uploadedFile = $fileService->upload();
-
-
-        try {
-            $text = getTextFromSpeech($uploadedFile['url']);
-        } catch (ApiException $exception) {
-            $fileService->deleteFile($uploadedFile['id']);
-            return Response::error(
-                code: SystemMessage::API_ERROR,
-                message: __('Calling api endpoints faced some issues, please try again later.'),
-            );
-        }
+        $uploadedFile = (new FileService())->upload();
 
         $voice = Voice::create([
             'user_id' => auth()->id(),
             'voice_file_id' => $uploadedFile['id'],
-            'text' => $text,
-            'status' => VoiceStatus::SUCCESS,
+            'text' => null,
+            'status' => VoiceStatus::FAILURE,
         ]);
 
+        TextGetterJob::dispatch($uploadedFile, $voice);
 
         return Response::success(
             message: __('File uploaded successfully.'),
-            data: new VoiceResource($voice)
+            data: [
+                'id' => $voice->id,
+                'wait_time' => 15,
+            ]
         );
     }
 
@@ -124,6 +117,18 @@ class VoiceController extends Controller
                         ->paginate(Base::PAGINATION_PER_PAGE)
                 )
             )
+        );
+    }
+
+    public function show(Voice $voice)
+    {
+        if ($voice->status == VoiceStatus::FAILURE) {
+            return Response::dataNotFound();
+        }
+
+
+        return Response::success(
+            data: new VoiceResource($voice)
         );
     }
 

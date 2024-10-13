@@ -4,7 +4,6 @@ namespace App\Services;
 
 
 use App\Enums\IsPrivate;
-use App\Exceptions\File\DifficultyCreatingValidationRulesException;
 use App\Exceptions\File\EntryFieldsMissMatchTableFillablesException;
 use App\Exceptions\File\FileException;
 use App\Rules\VoiceDuration;
@@ -75,7 +74,6 @@ class FileService
      */
     private function getTypes(): array
     {
-
         return array_keys(config('file.types'));
     }
 
@@ -275,7 +273,9 @@ class FileService
             'name' => $fileNameFormatted,
             'size' => $fileSize,
             'ext' => $fileExtension,
-            'url' => $this->getUrl($row->id)
+            'url' => route('api.v1.get-file', [
+                'fileName' => $row->file
+            ])
         ];
     }
 
@@ -376,7 +376,9 @@ class FileService
                 ]
             );
         } else {
-            $url = Storage::disk($typeConfig["disk"])->url($file->file);
+            $url = route('api.v1.get-file', [
+                'fileName' => $file->file
+            ]);
         }
 
         return $url;
@@ -427,7 +429,9 @@ class FileService
                 ]
             );
         } else {
-            $finalArray["url"] = Storage::disk($typeConfig["disk"])->url($file->file);
+            $finalArray["url"] = route('api.v1.get-file', [
+                'fileName' => $file->file
+            ]);
         }
 
         return $finalArray;

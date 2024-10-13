@@ -18,9 +18,9 @@ trait FileUrlGenerator
     {
         if (!isset($this->$field_name) || $this->$field_name == '') return null;
 
-        $service = new FileService();
-        return $service
-            ->getUrl($this->$field_name);
+        return  route('api.v1.get-file',[
+            'fileName' => $this->$field_name
+        ]);
     }
 
     /**

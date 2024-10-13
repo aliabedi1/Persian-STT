@@ -1,5 +1,8 @@
 <?php
 
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+
 if (!function_exists('getTextFromSpeech')) {
     /**
      * @throws \Exception
@@ -96,3 +99,50 @@ if (!function_exists('sendSms')) {
         curl_close($curl);
     }
 }
+
+if (!function_exists('getTextFromSpeechAvalAi')) {
+    /**
+     * @param string $filePath
+     * @return string
+     */
+    function getTextFromSpeechAvalAi(string $filePath): string
+    {
+
+        $apiKey = 'aa-2jDAh2X30lygNsv3ZJTmu3c0CyiOPDl4PiE4SkOy5scHTuT0';
+        $audioFilePath = storage_path('app/public/' . $filePath);
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "https://api.avalai.ir/v1/audio/transcriptions");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $postFields = [
+            'file' => new CURLFile($audioFilePath),
+            'model' => 'whisper-1',
+            'language' => 'fa'
+        ];
+
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+
+        $headers = [
+            "Authorization: Bearer $apiKey",
+            "Content-Type: multipart/form-data"
+        ];
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $response = curl_exec($ch);
+
+        if(curl_errno($ch)) {
+             $output = 'خطا در دریافت متن' ;
+        } else {
+            $output =  $response;
+        }
+        curl_close($ch);
+
+        return $output;
+    }
+}
+
+
+
