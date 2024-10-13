@@ -25,6 +25,6 @@ class DebugCommand extends Command
      */
     public function handle()
     {
-        dd(json_decode(getTextFromSpeechAvalAi('c814a66d5b3e4c0393f8952a0425ba0deeb905b0.mp3'))->text);
+        dd(getTextFromSpeechAvalAi('c814a66d5b3e4c0393f8952a0425ba0deeb905b0.mp3'));
     }
 }

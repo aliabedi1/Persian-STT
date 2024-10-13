@@ -40,7 +40,7 @@ class TextGetterJob implements ShouldQueue
     {
 
         try {
-            $text = json_decode(getTextFromSpeechAvalAi($this->uploadedFile['name']))->text;
+            $text = getTextFromSpeech($this->uploadedFile['url']);
             $this->voice
                 ->update([
                     'text' => $text,
