@@ -97,14 +97,13 @@ if (!function_exists('sendSms')) {
     }
 }
 
-if (!function_exists('getTextFromSpeechAvalAi')) {
+if (!function_exists('getTextFromSpeechAvalAiGpt4')) {
     /**
      * @param string $filePath
      * @return string
      */
-    function getTextFromSpeechAvalAi(string $filePath): string
+    function getTextFromSpeechAvalAiGpt4(string $filePath): string
     {
-
         $apiKey = 'aa-2jDAh2X30lygNsv3ZJTmu3c0CyiOPDl4PiE4SkOy5scHTuT0';
         $audioFilePath = storage_path('app/public/' . $filePath);
 
@@ -130,16 +129,93 @@ if (!function_exists('getTextFromSpeechAvalAi')) {
 
         $response = curl_exec($ch);
 
-        if(curl_errno($ch)) {
-             $output = 'خطا در دریافت متن' ;
+        if (curl_errno($ch)) {
+            $transcription = null;
         } else {
-            $output =  $response;
+            $transcription = json_decode($response)->text;
         }
         curl_close($ch);
 
-        return $output;
+        // Continue only if transcription is successful
+        if (!empty($transcription)) {
+            // Step 2: Send the transcribed text to GPT-4
+            $ch = curl_init();
+
+            curl_setopt($ch, CURLOPT_URL, "https://api.avalai.ir/v1/chat/completions");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POST, 1);
+
+            $postFields = json_encode([
+                'model' => 'gpt-4',
+                'messages' => [
+                    ['role' => 'system', 'content' => 'You are a helpful assistant.'],
+                    ['role' => 'user', 'content' => $transcription] // Transcribed text as input to GPT-4
+                ]
+            ]);
+
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+
+            $headers = [
+                "Authorization: Bearer $apiKey",
+                "Content-Type: application/json"
+            ];
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+            $response = curl_exec($ch);
+
+            if (curl_errno($ch)) {
+                $output = 'Error:' . curl_error($ch);
+            } else {
+
+                $gptResponse = json_decode($response, true)['choices'][0]['message']['content'];
+                $output = "GPT-4 Response: " . $gptResponse . "\n";
+            }
+
+            curl_close($ch);
+            return $output;
+
+        }
+        return 'no response from api';
     }
 }
+function getTextFromSpeechAvalAi(string $filePath): string
+{
+
+    $apiKey = 'aa-2jDAh2X30lygNsv3ZJTmu3c0CyiOPDl4PiE4SkOy5scHTuT0';
+    $audioFilePath = storage_path('app/public/' . $filePath);
+
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_URL, "https://api.avalai.ir/v1/audio/transcriptions");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POST, 1);
+
+    $postFields = [
+        'file' => new CURLFile($audioFilePath),
+        'model' => 'whisper-1',
+        'language' => 'fa'
+    ];
+
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+
+    $headers = [
+        "Authorization: Bearer $apiKey",
+        "Content-Type: multipart/form-data"
+    ];
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+    $response = curl_exec($ch);
+
+    if(curl_errno($ch)) {
+        $output = 'خطا در دریافت متن' ;
+    } else {
+        $output =  $response;
+    }
+    curl_close($ch);
+
+    return $output;
+}
+
 
 
 
